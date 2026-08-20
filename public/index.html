@@ -1,1 +1,188 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diàleg amb Ausiàs March</title>
+    <style>
+        body { 
+            font-family: 'Georgia', 'Times New Roman', serif; 
+            background-color: transparent; /* Transparent per adaptar-se al fons de la UV */
+            color: #2b1d0c; 
+            margin: 0; 
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #main-container {
+            max-width: 100%; 
+            margin: 0 auto;
+            background: #f4ecd8; /* Color pergamí */
+            padding: 20px; 
+            border: 3px solid #b8860b; /* Marc daurat medieval */
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        #main-container::before {
+            content: "";
+            position: absolute;
+            top: 4px; left: 4px; right: 4px; bottom: 4px;
+            border: 1px solid #8b6508;
+            pointer-events: none;
+            border-radius: 4px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-family: 'Georgia', serif;
+            font-size: 1.3rem;
+            color: #4a3319;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #b8860b;
+            padding-bottom: 8px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
 
+        .content-wrapper { 
+            display: flex; 
+            gap: 15px; 
+            align-items: flex-start; 
+        }
+        .chat-section { flex: 2; display: flex; flex-direction: column; }
+        .image-section { flex: 1; text-align: center; }
+        
+        #ausias-img { 
+            max-width: 130px; 
+            width: 100%;
+            border: 2px solid #b8860b; 
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            background-color: #ebdcb5;
+        }
+
+        #chat-box { 
+            height: 280px; 
+            border: 2px inset #b8860b; 
+            padding: 12px; 
+            overflow-y: auto; 
+            background: #fffcf5; 
+            margin-bottom: 10px;
+            border-radius: 4px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        #input-area { display: flex; gap: 6px; }
+        
+        input { 
+            flex-grow: 1; 
+            padding: 10px; 
+            border: 1px solid #b8860b; 
+            background: #fffcf5; 
+            border-radius: 4px; 
+            font-family: 'Georgia', serif;
+            color: #2b1d0c;
+            font-size: 0.9rem;
+        }
+        input:focus {
+            outline: none;
+            border-color: #8b6508;
+        }
+
+        button { 
+            padding: 10px 16px; 
+            background: linear-gradient(to bottom, #cca33b, #8b6508); 
+            color: #fff; 
+            border: 1px solid #5a4005; 
+            cursor: pointer; 
+            font-weight: bold; 
+            border-radius: 4px; 
+            font-family: 'Georgia', serif;
+            font-size: 0.9rem;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+        }
+        button:hover { 
+            background: linear-gradient(to bottom, #dbb248, #9e730a); 
+        }
+        
+        p { margin: 0 0 10px 0; }
+        
+        /* Adaptació per a pantalles estretes de mòbil o requadres petits */
+        @media (max-width: 600px) {
+            #main-container { padding: 10px; }
+            .content-wrapper { flex-direction: column-reverse; align-items: center; }
+            .image-section { margin-bottom: 10px; }
+            #ausias-img { max-width: 100px; }
+            #chat-box { height: 220px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="main-container">
+        <h1>Diàleg amb Ausiàs March</h1>
+        <div class="content-wrapper">
+            <div class="chat-section">
+                <div id="chat-box">
+                    <p><b>Ausiàs:</b> <i>Qui no és trist de mos dictats no cur... Digues, quina inquietud d'ànima et pertorba?</i></p>
+                </div>
+                <div id="input-area">
+                    <input type="text" id="user-input" placeholder="Pregunteu al cavaller..." onkeypress="if(event.key === 'Enter') enviarPregunta()">
+                    <button onclick="enviarPregunta()">Enviar</button>
+                </div>
+            </div>
+            <div class="image-section">
+                <img src="ausias.jpg" alt="Ausiàs March" id="ausias-img">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WORKER_URL = 'https://ausias-march.francesc-j-hernandez.workers.dev/';
+        const imatgesParlant = ['ausias.jpg', 'ausias-parlant1.jpg', 'ausias-parlant2.jpg'];
+        let intervalParlar = null;
+
+        async function enviarPregunta() {
+            const input = document.getElementById('user-input');
+            const chatBox = document.getElementById('chat-box');
+            const imgAusias = document.getElementById('ausias-img');
+            const pregunta = input.value.trim();
+            if (!pregunta) return;
+            
+            chatBox.innerHTML += `<p><b>Vós:</b> ${pregunta}</p>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            let indexImatge = 0;
+            intervalParlar = setInterval(() => {
+                indexImatge = (indexImatge + 1) % imatgesParlant.length;
+                imgAusias.src = imatgesParlant[indexImatge];
+            }, 250);
+
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pregunta: pregunta })
+                });
+                const data = await response.json();
+                
+                if (data.resposta) {
+                    chatBox.innerHTML += `<p><b>Ausiàs:</b> ${data.resposta}</p>`;
+                } else if (data.error) {
+                    chatBox.innerHTML += `<p><b>Ausiàs:</b> <i>(Error: ${data.error})</i></p>`;
+                } else {
+                    chatBox.innerHTML += `<p><b>Ausiàs:</b> <i>(El meu pensament s'emboira...)</i></p>`;
+                }
+            } catch (e) {
+                chatBox.innerHTML += `<p><i>(Error de connexió amb el poeta)</i></p>`;
+            } finally {
+                clearInterval(intervalParlar);
+                imgAusias.src = 'ausias.jpg';
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
