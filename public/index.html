@@ -7,7 +7,7 @@
     <style>
         body { 
             font-family: 'Georgia', 'Times New Roman', serif; 
-            background-color: transparent; /* Transparent per adaptar-se al fons de la UV */
+            background-color: transparent;
             color: #2b1d0c; 
             margin: 0; 
             padding: 10px;
@@ -16,9 +16,9 @@
         #main-container {
             max-width: 100%; 
             margin: 0 auto;
-            background: #f4ecd8; /* Color pergamí */
+            background: #f4ecd8;
             padding: 20px; 
-            border: 3px solid #b8860b; /* Marc daurat medieval */
+            border: 3px solid #b8860b;
             border-radius: 6px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             position: relative;
@@ -31,7 +31,6 @@
             pointer-events: none;
             border-radius: 4px;
         }
-        
         h1 {
             text-align: center;
             font-family: 'Georgia', serif;
@@ -44,7 +43,6 @@
             margin-top: 0;
             margin-bottom: 15px;
         }
-
         .content-wrapper { 
             display: flex; 
             gap: 15px; 
@@ -52,7 +50,6 @@
         }
         .chat-section { flex: 2; display: flex; flex-direction: column; }
         .image-section { flex: 1; text-align: center; }
-        
         #ausias-img { 
             max-width: 130px; 
             width: 100%;
@@ -61,7 +58,6 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.2);
             background-color: #ebdcb5;
         }
-
         #chat-box { 
             height: 280px; 
             border: 2px inset #b8860b; 
@@ -73,9 +69,7 @@
             line-height: 1.5;
             font-size: 0.95rem;
         }
-
         #input-area { display: flex; gap: 6px; }
-        
         input { 
             flex-grow: 1; 
             padding: 10px; 
@@ -90,7 +84,6 @@
             outline: none;
             border-color: #8b6508;
         }
-
         button { 
             padding: 10px 16px; 
             background: linear-gradient(to bottom, #cca33b, #8b6508); 
@@ -106,10 +99,7 @@
         button:hover { 
             background: linear-gradient(to bottom, #dbb248, #9e730a); 
         }
-        
         p { margin: 0 0 10px 0; }
-        
-        /* Adaptació per a pantalles estretes de mòbil o requadres petits */
         @media (max-width: 600px) {
             #main-container { padding: 10px; }
             .content-wrapper { flex-direction: column-reverse; align-items: center; }
@@ -173,7 +163,7 @@
                 } else if (data.error) {
                     chatBox.innerHTML += `<p><b>Ausiàs:</b> <i>(Error: ${data.error})</i></p>`;
                 } else {
-                    chatBox.innerHTML += `<p><b>Ausiàs:</b> <i>(El meu pensament s'emboira...)</i></p>`;
+                    chatBox.innerHTML += `<p><b>Ausiàs:</b> <i>El meu pensament s'emboira... El Servent d'Amor (allò que vós anomeneu Agent-IA) no ha pogut formular resposta. Torneu-me a fer la pregunta d'ací una estona, per favor, i em plaurà respondre-vos.</i></p>`;
                 }
             } catch (e) {
                 chatBox.innerHTML += `<p><i>(Error de connexió amb el poeta)</i></p>`;
